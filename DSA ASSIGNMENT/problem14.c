@@ -1,76 +1,99 @@
 #include <stdio.h>
 
-int findFloor(int arr[], int size, int target) {
-    int left = 0, right = size - 1;
-    int floor = -1;
+int findFloor(int arr[], int n, int key) {
+    int low = 0, high = n - 1, mid, floor = -1;
 
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
+    while (low <= high) {
+        mid = low + (high - low) / 2;
 
-        if (arr[mid] == target) {
+        if (arr[mid] == key) {
             return arr[mid];
-        } else if (arr[mid] < target) {
+        } else if (arr[mid] < key) {
             floor = arr[mid];
-            left = mid + 1;
+            low = mid + 1;
         } else {
-            right = mid - 1;
+            high = mid - 1;
         }
     }
 
     return floor;
 }
 
-int findCeil(int arr[], int size, int target) {
-    int left = 0, right = size - 1;
-    int ceil = -1;
+int findCeil(int arr[], int n, int key) {
+    int low = 0, high = n - 1, mid, ceil = -1;
 
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
+    while (low <= high) {
+        mid = low + (high - low) / 2;
 
-        if (arr[mid] == target) {
+        if (arr[mid] == key) {
             return arr[mid];
-        } else if (arr[mid] > target) {
-            ceil = arr[mid];
-            right = mid - 1;
+        } else if (arr[mid] < key) {
+            low = mid + 1;
         } else {
-            left = mid + 1;
+            ceil = arr[mid];
+            high = mid - 1;
         }
     }
 
     return ceil;
 }
 
-int findPeak(int arr[], int size) {
-    int left = 0, right = size - 1;
+int findPeak(int arr[], int n) {
+    int low = 0, high = n - 1, mid;
 
-    while (left < right) {
-        int mid = left + (right - left) / 2;
+    while (low <= high) {
+        mid = low + (high - low) / 2;
 
-        if (arr[mid] > arr[mid + 1]) {
-            return arr[mid];
-        } else if (arr[mid] < arr[mid + 1]) {
-            left = mid + 1;
+        if ((mid == 0 || arr[mid] >= arr[mid - 1]) && (mid == n - 1 || arr[mid] >= arr[mid + 1])) {
+            return arr[mid]; // Found peak element
+        } else if (mid > 0 && arr[mid - 1] > arr[mid]) {
+            high = mid - 1; // Search left side
+        } else {
+            low = mid + 1; // Search right side
         }
     }
 
-    return arr[left]; 
+    return -1; // Peak not found
 }
 
-int findMinimum(int arr[], int size) {
-    int left = 0, right = size - 1;
+int findMinimum(int arr[], int n) {
+    int low = 0, high = n - 1, mid;
 
-    while (left < right) {
-        int mid = left + (right - left) / 2;
+    while (low <= high) {
+        if (arr[low] <= arr[high]) {
+            return arr[low]; // Array is already sorted
+        }
 
-        if (arr[mid] > arr[right]) {
-            left = mid + 1;
-        } else {
-            right = mid;
+        mid = low + (high - low) / 2;
+        int next = (mid + 1) % n;
+        int prev = (mid - 1 + n) % n;
+
+        if (arr[mid] <= arr[next] && arr[mid] <= arr[prev]) {
+            return arr[mid]; // Found minimum element
+        } else if (arr[mid] <= arr[high]) {
+            high = mid - 1; // Search left side
+        } else if (arr[mid] >= arr[low]) {
+            low = mid + 1; // Search right side
         }
     }
 
-    return arr[left];
+    return -1; // Minimum not found
 }
 
 int main() {
-    int arr[] = {5, 6, 7, 8
+    int arr[] = {4, 5, 6, 7, 1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int key = 5;
+
+    int floor = findFloor(arr, n, key);
+    int ceil = findCeil(arr, n, key);
+    int peak = findPeak(arr, n);
+    int min = findMinimum(arr, n);
+
+    printf("Floor of %d: %d\n", key, floor);
+    printf("Ceiling of %d: %d\n", key, ceil);
+    printf("Peak element: %d\n", peak);
+    printf("Minimum element: %d\n", min);
+
+    return 0;
+}
